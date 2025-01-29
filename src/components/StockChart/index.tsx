@@ -12,6 +12,7 @@ import { formatDecimal0, formatDecimal2 } from '@utils/formatNumber'
 import { formatDateMMDDYY } from '@utils/formatDate'
 import LoadingOverlay from '@components/LoadingOverlay'
 import { Point } from './types'
+import NoDataOverlay from '@components/NoDataOverlay'
 
 const StockChart: React.FC = () => {
     const endDate = dayjs().format('YYYY-MM-DD')
@@ -181,13 +182,15 @@ const StockChart: React.FC = () => {
         }
     }, [seriesData, symbol, selectedAttribute])
 
+    const noData = seriesData?.length === 0
+
     return (
         <div
             ref={containerRef}
             style={{ position: 'relative', width: '100%', height: '100%' }}
         >
             {loading && <LoadingOverlay />}
-
+            {!loading && noData && <NoDataOverlay />}
             <HighchartsReact
                 ref={chartRef}
                 containerProps={{

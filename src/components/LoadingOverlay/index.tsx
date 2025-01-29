@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 const LoadingOverlay: React.FC = () => {
     return (
         <div className={styles.loadingOverlay}>
-            <span>Loading</span>
+            <h4>Loading</h4>
             <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>
     )

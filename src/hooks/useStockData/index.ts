@@ -8,11 +8,11 @@ export function useStockData(
     startDate: string,
     endDate: string
 ): {
-    data: StockDataResponse | undefined
+    data: StockDataResponse | null
     loading: boolean
     error: Error | null
 } {
-    const [data, setData] = useState<StockDataResponse>()
+    const [data, setData] = useState<StockDataResponse | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<Error | null>(null)
     const appConfig = useAppConfig()
@@ -20,7 +20,6 @@ export function useStockData(
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
-            setError(null)
             try {
                 const res = await fetchStockData(
                     symbol,
@@ -29,9 +28,10 @@ export function useStockData(
                     appConfig
                 )
                 setData(res)
+                setError(null)
             } catch (err) {
                 setError(err as Error)
-                setData(undefined)
+                setData(null)
             } finally {
                 setLoading(false)
             }
