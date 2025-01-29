@@ -25,13 +25,11 @@
 
         "paths": {
             "@components/*": ["src/components/*"],
-            "@styles/*": ["src/styles/*"],
             "@utils/*": ["src/utils/*"],
             "@hooks/*": ["src/hooks/*"],
             "@services/*": ["src/services/*"],
             "@model/*": ["src/models/*"],
             "@views/*": ["src/views/*"],
-            "@type/*": ["src/types/*"],
             "@state/*": ["src/state/*"],
             "@config/*": ["src/config/*"],
             "@providers/*": ["src/providers/*"]
