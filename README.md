@@ -90,7 +90,3 @@ On a scale of **1** (not strong) to **5** (work of art), here’s how I’d rate
 
 3. **Execution and velocity**: **5**
     - Delivered the core application in a short timeframe with functional UI, data fetching, charting, and tests for key utilities.
-
----
-
-**Thank you for reviewing this project!** If you have any feedback or questions, please open an issue or contact me directly.
