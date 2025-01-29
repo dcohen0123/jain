@@ -97,10 +97,14 @@ const StockChart: React.FC = () => {
                     },
                 },
             },
+            legend: {
+                enabled: false,
+            },
             title: {
                 text: `${symbol} (${selectedAttribute?.label})`,
             },
             xAxis: {
+                title: '',
                 type: 'category',
                 labels: {
                     formatter() {
@@ -109,7 +113,7 @@ const StockChart: React.FC = () => {
                 },
             },
             yAxis: {
-                title: { text: selectedAttribute?.label },
+                title: '',
                 labels: {
                     formatter() {
                         return formatDecimal0(this.value as number)
