@@ -104,7 +104,7 @@ const StockChart: React.FC = () => {
                 text: `${symbol} (${selectedAttribute?.label})`,
             },
             xAxis: {
-                title: '',
+                title: { text: '' },
                 type: 'category',
                 labels: {
                     formatter() {
@@ -113,7 +113,7 @@ const StockChart: React.FC = () => {
                 },
             },
             yAxis: {
-                title: '',
+                title: { text: '' },
                 labels: {
                     formatter() {
                         return formatDecimal0(this.value as number)
@@ -158,15 +158,7 @@ const StockChart: React.FC = () => {
                     point: {
                         events: {
                             mouseOver() {
-                                const { start } = pointsRef.current
                                 if (!mouseDownRef.current) return
-                                if (!start) {
-                                    pointsRef.current.start = {
-                                        x: this.x,
-                                        y: this.y as number,
-                                    }
-                                    return
-                                }
                                 pointsRef.current.end = {
                                     x: this.x,
                                     y: this.y as number,
