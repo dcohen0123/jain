@@ -8,7 +8,7 @@ import { notification } from 'antd'
 
 import { useStockData } from '@hooks/useStockData'
 import { useStockAttribute } from '@hooks/useStockAttribute'
-import { formatDecimal0, formatDecimal2 } from '@utils/formatNumber'
+import { formatDecimal2, formatDecimal0Compact } from '@utils/formatNumber'
 import { formatDateMMDDYY } from '@utils/formatDate'
 import LoadingOverlay from '@components/LoadingOverlay'
 import { Point } from './types'
@@ -116,7 +116,7 @@ const StockChart: React.FC = () => {
                 title: { text: '' },
                 labels: {
                     formatter() {
-                        return formatDecimal0(this.value as number)
+                        return formatDecimal0Compact(this.value as number)
                     },
                 },
             },
