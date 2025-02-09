@@ -1,7 +1,7 @@
-import { AppConfigType } from './types'
-import packageJson from '../../../package.json'
+import { AppConfigType } from '@type/AppConfig';
+import packageJson from '../../../package.json';
 
-const env = import.meta.env
+const env = import.meta.env;
 
 export const appConfig: AppConfigType = {
     appName: packageJson.name,
@@ -13,4 +13,4 @@ export const appConfig: AppConfigType = {
     apiKeys: {
         financialModelPrep: env.VITE_API_KEY,
     },
-}
+};

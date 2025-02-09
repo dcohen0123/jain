@@ -7,4 +7,4 @@ export const stockDropdownOptions = [
     { label: 'Volume', value: 'volume' },
     { label: 'Unadjusted Volume', value: 'unadjustedVolume' },
     { label: 'Change', value: 'change' },
-]
+];

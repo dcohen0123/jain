@@ -29,10 +29,12 @@
             "@hooks/*": ["src/hooks/*"],
             "@services/*": ["src/services/*"],
             "@model/*": ["src/models/*"],
-            "@views/*": ["src/views/*"],
+            "@pages/*": ["src/pages/*"],
             "@state/*": ["src/state/*"],
             "@config/*": ["src/config/*"],
-            "@providers/*": ["src/providers/*"]
+            "@providers/*": ["src/providers/*"],
+            "@tests/*": ["src/tests/*"],
+            "@type/*": ["src/types/*"]
         }
     },
     "include": ["src"],

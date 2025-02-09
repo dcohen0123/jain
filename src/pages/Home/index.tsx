@@ -1,6 +1,6 @@
-import styles from './index.module.scss'
-import StockDropdown from '@components/StockDropdown'
-import StockChart from '@components/StockChart'
+import styles from './index.module.scss';
+import StockDropdown from '@components/StockDropdown';
+import StockChart from '@components/StockChart';
 
 function Home() {
     return (
@@ -12,7 +12,7 @@ function Home() {
                 <StockChart />
             </div>
         </div>
-    )
+    );
 }
 
-export default Home
+export default Home;

@@ -1,44 +1,44 @@
-import { useState, useEffect } from 'react'
-import { useAppConfig } from '@hooks/useAppConfig'
-import { fetchStockData } from '@services/StockData'
-import type { StockDataResponse } from '@services/StockData/types'
+import { useState, useEffect } from 'react';
+import { useAppConfig } from '@hooks/useAppConfig';
+import { fetchStockData } from '@services/StockData';
+import type { StockDataResponse } from '@type/StockData';
 
 export function useStockData(
     symbol: string,
     startDate: string,
     endDate: string
 ): {
-    data: StockDataResponse | null
-    loading: boolean
-    error: Error | null
+    data: StockDataResponse | null;
+    loading: boolean;
+    error: Error | null;
 } {
-    const [data, setData] = useState<StockDataResponse | null>(null)
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<Error | null>(null)
-    const appConfig = useAppConfig()
+    const [data, setData] = useState<StockDataResponse | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<Error | null>(null);
+    const appConfig = useAppConfig();
 
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true)
+            setLoading(true);
             try {
                 const res = await fetchStockData(
                     symbol,
                     startDate,
                     endDate,
                     appConfig
-                )
-                setData(res)
-                setError(null)
+                );
+                setData(res);
+                setError(null);
             } catch (err) {
-                setError(err as Error)
-                setData(null)
+                setError(err as Error);
+                setData(null);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
+        };
 
-        fetchData()
-    }, [symbol, startDate, endDate, appConfig])
+        fetchData();
+    }, [symbol, startDate, endDate, appConfig]);
 
-    return { data, loading, error }
+    return { data, loading, error };
 }

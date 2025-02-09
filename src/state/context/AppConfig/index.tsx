@@ -1,5 +1,5 @@
-import { createContext } from 'react'
-import type { AppConfigType } from '@config/AppConfig/types'
-import { appConfig } from '@config/AppConfig'
+import { createContext } from 'react';
+import type { AppConfigType } from '@type/AppConfig';
+import { appConfig } from '@config/AppConfig';
 
-export const AppConfigContext = createContext<AppConfigType>(appConfig)
+export const AppConfigContext = createContext<AppConfigType>(appConfig);

@@ -1,4 +1,4 @@
-import { StockDataResponse } from '@services/StockData/types'
+import { StockDataResponse } from '@type/StockData';
 
 export const stockData: StockDataResponse = {
     symbol: 'AAPL',
@@ -18859,4 +18859,4 @@ export const stockData: StockDataResponse = {
             changeOverTime: -0.003612,
         },
     ],
-}
+};

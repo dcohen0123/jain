@@ -1,75 +1,79 @@
-import { useMemo, useRef, useEffect } from 'react'
+import { useMemo, useRef, useEffect } from 'react';
 import HighchartsReact, {
     HighchartsReactRefObject,
-} from 'highcharts-react-official'
-import Highcharts from 'highcharts'
-import dayjs from 'dayjs'
-import { notification } from 'antd'
+} from 'highcharts-react-official';
+import Highcharts from 'highcharts';
+import dayjs from 'dayjs';
+import { notification } from 'antd';
 
-import { useStockData } from '@hooks/useStockData'
-import { useStockAttribute } from '@hooks/useStockAttribute'
-import { formatDecimal2, formatDecimal0Compact } from '@utils/formatNumber'
-import { formatDateMMDDYY } from '@utils/formatDate'
-import LoadingOverlay from '@components/LoadingOverlay'
-import { Point } from './types'
-import NoDataOverlay from '@components/NoDataOverlay'
+import { useStockData } from '@hooks/useStockData';
+import { useStockAttribute } from '@hooks/useStockAttribute';
+import { formatDecimal2, formatDecimal0Compact } from '@utils/formatNumber';
+import { formatDateMMDDYY } from '@utils/formatDate';
+import LoadingOverlay from '@components/LoadingOverlay';
+import { Point } from '@type/StockChart';
+import NoDataOverlay from '@components/NoDataOverlay';
 
 const StockChart: React.FC = () => {
-    const endDate = dayjs().format('YYYY-MM-DD')
-    const startDate = dayjs().subtract(12, 'month').format('YYYY-MM-DD')
-    const symbol = 'AAPL'
-    const [selectedAttribute] = useStockAttribute()
+    const endDate = dayjs().format('YYYY-MM-DD');
+    const startDate = dayjs().subtract(12, 'month').format('YYYY-MM-DD');
+    const symbol = 'AAPL';
+    const [selectedAttribute] = useStockAttribute();
 
-    const { data, loading, error } = useStockData(symbol, startDate, endDate)
+    const { data, loading, error } = useStockData(symbol, startDate, endDate);
 
-    const containerRef = useRef<HTMLDivElement | null>(null)
-    const chartRef = useRef<HighchartsReactRefObject | null>(null)
-    const mouseDownRef = useRef<boolean>(false)
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const chartRef = useRef<HighchartsReactRefObject | null>(null);
+    const mouseDownRef = useRef<boolean>(false);
     const pointsRef = useRef<{
-        start: Point | null
-        end: Point | null
+        start: Point | null;
+        end: Point | null;
     }>({
         start: null,
         end: null,
-    })
+    });
 
     useEffect(() => {
         if (error) {
             notification.error({
                 message: 'Stock Chart Error',
                 description: error.message,
-            })
+            });
         }
-    }, [error])
+    }, [error]);
 
     useEffect(() => {
-        const container = containerRef.current
+        const container = containerRef.current;
 
         const handleMouseDown = () => {
-            mouseDownRef.current = true
-            pointsRef.current.start = null
-            pointsRef.current.end = null
-            const chart = chartRef.current?.chart
+            mouseDownRef.current = true;
+            pointsRef.current.start = null;
+            pointsRef.current.end = null;
+            const chart = chartRef.current?.chart;
             if (chart?.hoverPoint) {
-                const { x, y } = chart.hoverPoint
-                pointsRef.current.start = { x: x as number, y: y as number }
+                const { x, y } = chart.hoverPoint;
+                pointsRef.current.start = { x: x as number, y: y as number };
             }
-        }
+        };
 
         const handleMouseUp = () => {
-            mouseDownRef.current = false
-            pointsRef.current.start = null
-            pointsRef.current.end = null
-        }
+            mouseDownRef.current = false;
+            pointsRef.current.start = null;
+            pointsRef.current.end = null;
+            const chart = chartRef.current?.chart;
+            if (chart?.hoverPoint) {
+                chart.tooltip.refresh(chart.hoverPoint);
+            }
+        };
 
-        container?.addEventListener('mousedown', handleMouseDown)
-        container?.addEventListener('mouseup', handleMouseUp)
+        container?.addEventListener('mousedown', handleMouseDown);
+        container?.addEventListener('mouseup', handleMouseUp);
 
         return () => {
-            container?.removeEventListener('mousedown', handleMouseDown)
-            container?.removeEventListener('mouseup', handleMouseUp)
-        }
-    }, [])
+            container?.removeEventListener('mousedown', handleMouseDown);
+            container?.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, []);
 
     // Process data series
     const seriesData = useMemo(() => {
@@ -77,12 +81,12 @@ const StockChart: React.FC = () => {
             ?.slice()
             ?.reverse()
             ?.map((item) => {
-                const xValue = item.date
+                const xValue = item.date;
                 const yValue =
-                    item[selectedAttribute?.value as keyof typeof item]
-                return [xValue, yValue]
-            })
-    }, [data, selectedAttribute])
+                    item[selectedAttribute?.value as keyof typeof item];
+                return [xValue, yValue];
+            });
+    }, [data, selectedAttribute]);
 
     const options: Highcharts.Options = useMemo(() => {
         return {
@@ -92,8 +96,8 @@ const StockChart: React.FC = () => {
                 },
                 events: {
                     selection(e) {
-                        e.preventDefault()
-                        return false
+                        e.preventDefault();
+                        return false;
                     },
                 },
             },
@@ -108,7 +112,7 @@ const StockChart: React.FC = () => {
                 type: 'category',
                 labels: {
                     formatter() {
-                        return formatDateMMDDYY(this.value as string)
+                        return formatDateMMDDYY(this.value as string);
                     },
                 },
             },
@@ -116,40 +120,40 @@ const StockChart: React.FC = () => {
                 title: { text: '' },
                 labels: {
                     formatter() {
-                        return formatDecimal0Compact(this.value as number)
+                        return formatDecimal0Compact(this.value as number);
                     },
                 },
             },
             tooltip: {
                 useHTML: true,
                 formatter() {
-                    if (!seriesData) return
-                    let { start, end } = pointsRef.current
+                    if (!seriesData) return;
+                    let { start, end } = pointsRef.current;
                     if (start && end) {
                         if (end.x < start.x) {
-                            ;[start, end] = [end, start]
+                            [start, end] = [end, start];
                         }
-                        const startDateVal = seriesData[start.x][0] as string
-                        const endDateVal = seriesData[end.x][0] as string
-                        const deltaY = end.y - start.y
+                        const startDateVal = seriesData[start.x][0] as string;
+                        const endDateVal = seriesData[end.x][0] as string;
+                        const deltaY = end.y - start.y;
                         return `
                             <div><strong>${formatDateMMDDYY(startDateVal)} - ${formatDateMMDDYY(endDateVal)}</strong></div>
                             <div style="margin-top: 3px;">
                                 <span style="color:${this.series.color}">\u25CF</span>
                                 ${this.series.name}: <b>${formatDecimal2(deltaY)}</b>
                             </div>
-                        `
+                        `;
                     } else {
                         const date = formatDateMMDDYY(
                             seriesData[this.x][0] as string
-                        )
+                        );
                         return `
                             <div><strong>${date}</strong></div>
                             <div style="margin-top: 3px;">
                                 <span style="color:${this.series.color};">\u25CF</span>
                                 ${this.series.name}: <b>${formatDecimal2(this.y as number)}</b>
                             </div>
-                        `
+                        `;
                     }
                 },
             },
@@ -158,11 +162,11 @@ const StockChart: React.FC = () => {
                     point: {
                         events: {
                             mouseOver() {
-                                if (!mouseDownRef.current) return
+                                if (!mouseDownRef.current) return;
                                 pointsRef.current.end = {
                                     x: this.x,
                                     y: this.y as number,
-                                }
+                                };
                             },
                         },
                     },
@@ -175,10 +179,10 @@ const StockChart: React.FC = () => {
                     data: seriesData,
                 },
             ],
-        }
-    }, [seriesData, symbol, selectedAttribute])
+        };
+    }, [seriesData, symbol, selectedAttribute]);
 
-    const noData = seriesData?.length === 0
+    const noData = seriesData?.length === 0;
 
     return (
         <div
@@ -196,7 +200,7 @@ const StockChart: React.FC = () => {
                 options={options}
             />
         </div>
-    )
-}
+    );
+};
 
-export default StockChart
+export default StockChart;

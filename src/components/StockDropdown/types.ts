@@ -1,4 +1,4 @@
 export type StockDropdownOption = {
-    label: string
-    value: string
-}
+    label: string;
+    value: string;
+};
