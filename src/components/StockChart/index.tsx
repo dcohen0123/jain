@@ -2,23 +2,21 @@ import { useMemo, useRef, useEffect } from 'react';
 import HighchartsReact, {
     HighchartsReactRefObject,
 } from 'highcharts-react-official';
-import Highcharts from 'highcharts';
+import Highcharts, { SeriesOptionsType } from 'highcharts';
 import dayjs from 'dayjs';
 import { notification } from 'antd';
-
 import { useStockData } from '@hooks/useStockData';
 import { useStockAttribute } from '@hooks/useStockAttribute';
 import { formatDecimal2, formatDecimal0Compact } from '@utils/formatNumber';
 import { formatDateMMDDYY } from '@utils/formatDate';
 import LoadingOverlay from '@components/LoadingOverlay';
-import { Point } from '@type/StockChart';
 import NoDataOverlay from '@components/NoDataOverlay';
 import { useStockSymbol } from '@hooks/useStockSymbol';
 
 const StockChart: React.FC = () => {
     const endDate = dayjs().format('YYYY-MM-DD');
     const startDate = dayjs().subtract(12, 'month').format('YYYY-MM-DD');
-    const [selectedAttribute] = useStockAttribute();
+    const [selectedAttributes] = useStockAttribute();
     const [symbol] = useStockSymbol();
 
     const { data, loading, error } = useStockData(symbol, startDate, endDate);
@@ -27,8 +25,8 @@ const StockChart: React.FC = () => {
     const chartRef = useRef<HighchartsReactRefObject | null>(null);
     const mouseDownRef = useRef<boolean>(false);
     const pointsRef = useRef<{
-        start: Point | null;
-        end: Point | null;
+        start: Highcharts.Point | null;
+        end: Highcharts.Point | null;
     }>({
         start: null,
         end: null,
@@ -52,8 +50,7 @@ const StockChart: React.FC = () => {
             pointsRef.current.end = null;
             const chart = chartRef.current?.chart;
             if (chart?.hoverPoint) {
-                const { x, y } = chart.hoverPoint;
-                pointsRef.current.start = { x: x as number, y: y as number };
+                pointsRef.current.start = chart.hoverPoint;
             }
         };
 
@@ -78,18 +75,20 @@ const StockChart: React.FC = () => {
 
     // Process data series
     const seriesData = useMemo(() => {
-        return (
-            data?.historical
-                ?.slice()
-                ?.reverse()
-                ?.map((item) => {
-                    const xValue = item.date;
-                    const yValue =
-                        item[selectedAttribute?.value as keyof typeof item];
-                    return [xValue, yValue];
-                }) ?? []
-        );
-    }, [data, selectedAttribute]);
+        return selectedAttributes.map((x) => ({
+            data:
+                data?.historical
+                    ?.slice()
+                    ?.reverse()
+                    ?.map((item) => {
+                        const xValue = item.date;
+                        const yValue = item[x?.value as keyof typeof item];
+                        return [xValue, yValue];
+                    }) ?? [],
+            type: 'line',
+            name: x.label,
+        }));
+    }, [data, selectedAttributes]);
 
     const options: Highcharts.Options = useMemo(() => {
         return {
@@ -108,11 +107,11 @@ const StockChart: React.FC = () => {
                 enabled: false,
             },
             title: {
-                text: `${symbol} (${selectedAttribute?.label})`,
+                text: `${symbol} (${selectedAttributes?.map((x) => x.label).join(', ')})`,
             },
             xAxis: {
                 title: { text: '' },
-                type: 'category',
+                categories: seriesData?.[0]?.data?.map((d) => String(d[0])),
                 labels: {
                     formatter() {
                         return formatDateMMDDYY(this.value as string);
@@ -130,17 +129,16 @@ const StockChart: React.FC = () => {
             tooltip: {
                 useHTML: true,
                 formatter() {
-                    if (!seriesData) return;
+                    if (!this.series.data) return;
                     let { start, end } = pointsRef.current;
                     if (start && end) {
                         if (end.x < start.x) {
                             [start, end] = [end, start];
                         }
-                        const startDateVal = seriesData?.[
-                            start.x
-                        ]?.[0] as string;
-                        const endDateVal = seriesData?.[end.x]?.[0] as string;
-                        const deltaY = end.y - start.y;
+                        const startDateVal = start.category as string;
+                        const endDateVal = end?.category as string;
+                        const deltaY =
+                            (end?.y as number) - (start?.y as number);
                         return `
                             <div><strong>${formatDateMMDDYY(startDateVal)} - ${formatDateMMDDYY(endDateVal)}</strong></div>
                             <div style="margin-top: 3px;">
@@ -149,9 +147,7 @@ const StockChart: React.FC = () => {
                             </div>
                         `;
                     } else {
-                        const date = formatDateMMDDYY(
-                            seriesData[this.x][0] as string
-                        );
+                        const date = formatDateMMDDYY(this.category as string);
                         return `
                             <div><strong>${date}</strong></div>
                             <div style="margin-top: 3px;">
@@ -168,24 +164,15 @@ const StockChart: React.FC = () => {
                         events: {
                             mouseOver() {
                                 if (!mouseDownRef.current) return;
-                                pointsRef.current.end = {
-                                    x: this.x,
-                                    y: this.y as number,
-                                };
+                                pointsRef.current.end = this;
                             },
                         },
                     },
                 },
             },
-            series: [
-                {
-                    type: 'line',
-                    name: selectedAttribute?.label,
-                    data: seriesData,
-                },
-            ],
+            series: seriesData as Array<SeriesOptionsType>,
         };
-    }, [seriesData, symbol, selectedAttribute]);
+    }, [seriesData, symbol, selectedAttributes]);
 
     const noData = seriesData?.length === 0;
 

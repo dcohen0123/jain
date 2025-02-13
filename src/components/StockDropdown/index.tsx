@@ -10,14 +10,15 @@ const StockDropdown: React.FC = () => {
         _: string,
         option?: StockDropdownOption | StockDropdownOption[]
     ) => {
-        setSelectedAttribute(option as StockDropdownOption);
+        setSelectedAttribute(option as StockDropdownOption[]);
     };
 
     return (
         <Select
             style={{ width: '100%' }}
-            value={selectedAttribute?.value}
+            defaultValue={selectedAttribute?.[0]?.value}
             onChange={handleChange}
+            mode="multiple"
             options={stockDropdownOptions}
         />
     );
