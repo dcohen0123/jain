@@ -174,7 +174,9 @@ const StockChart: React.FC = () => {
         };
     }, [seriesData, symbol, selectedAttributes]);
 
-    const noData = seriesData?.length === 0;
+    const noData =
+        seriesData?.length === 0 ||
+        seriesData?.every((x) => x?.data?.length === 0);
 
     return (
         <div
