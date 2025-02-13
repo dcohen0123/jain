@@ -5,10 +5,15 @@
     height: 100%;
 }
 
-.dropdownWrapper {
-    margin: 10px;
-    width: 200px;
+.inputWrapper {
+    display: flex;
+    gap: 10px;
     flex: 0;
+    margin: 10px;
+}
+
+.inputWrapper > div {
+    width: 200px;
 }
 
 .chartWrapper {

@@ -13,12 +13,13 @@ import { formatDateMMDDYY } from '@utils/formatDate';
 import LoadingOverlay from '@components/LoadingOverlay';
 import { Point } from '@type/StockChart';
 import NoDataOverlay from '@components/NoDataOverlay';
+import { useStockSymbol } from '@hooks/useStockSymbol';
 
 const StockChart: React.FC = () => {
     const endDate = dayjs().format('YYYY-MM-DD');
     const startDate = dayjs().subtract(12, 'month').format('YYYY-MM-DD');
-    const symbol = 'AAPL';
     const [selectedAttribute] = useStockAttribute();
+    const [symbol] = useStockSymbol();
 
     const { data, loading, error } = useStockData(symbol, startDate, endDate);
 
@@ -77,15 +78,17 @@ const StockChart: React.FC = () => {
 
     // Process data series
     const seriesData = useMemo(() => {
-        return data?.historical
-            ?.slice()
-            ?.reverse()
-            ?.map((item) => {
-                const xValue = item.date;
-                const yValue =
-                    item[selectedAttribute?.value as keyof typeof item];
-                return [xValue, yValue];
-            });
+        return (
+            data?.historical
+                ?.slice()
+                ?.reverse()
+                ?.map((item) => {
+                    const xValue = item.date;
+                    const yValue =
+                        item[selectedAttribute?.value as keyof typeof item];
+                    return [xValue, yValue];
+                }) ?? []
+        );
     }, [data, selectedAttribute]);
 
     const options: Highcharts.Options = useMemo(() => {
@@ -133,8 +136,10 @@ const StockChart: React.FC = () => {
                         if (end.x < start.x) {
                             [start, end] = [end, start];
                         }
-                        const startDateVal = seriesData[start.x][0] as string;
-                        const endDateVal = seriesData[end.x][0] as string;
+                        const startDateVal = seriesData?.[
+                            start.x
+                        ]?.[0] as string;
+                        const endDateVal = seriesData?.[end.x]?.[0] as string;
                         const deltaY = end.y - start.y;
                         return `
                             <div><strong>${formatDateMMDDYY(startDateVal)} - ${formatDateMMDDYY(endDateVal)}</strong></div>

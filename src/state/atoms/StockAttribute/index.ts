@@ -1,5 +1,5 @@
 import { stockDropdownOptions } from '@model/StockDropdownOptions';
-import { StockDropdownOption } from '@components/StockDropdown/types';
+import { StockDropdownOption } from '@type/StockDropdown';
 import { atom } from 'jotai';
 
 export const stockAttributeAtom = atom<StockDropdownOption | null>(

@@ -1,7 +1,7 @@
 import { Select } from 'antd';
 import { useStockAttribute } from '@hooks/useStockAttribute';
 import { stockDropdownOptions } from '@model/StockDropdownOptions';
-import { StockDropdownOption } from './types';
+import { StockDropdownOption } from '../../types/StockDropdown';
 
 const StockDropdown: React.FC = () => {
     const [selectedAttribute, setSelectedAttribute] = useStockAttribute();
