@@ -24,7 +24,6 @@
         "highcharts": "^12.1.2",
         "highcharts-react-official": "^3.2.1",
         "jotai": "^2.11.1",
-        "path": "^0.12.7",
         "react": "^19.0.0",
         "react-dom": "^19.0.0"
     },
